@@ -4,8 +4,10 @@ import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useTaskStore } from "@/store/task-store";
+import { useFilterStore } from "@/store/filter-store";
 import { useDebounce } from "@/hooks/use-debounce";
 import { Task, TaskStatus } from "@/types/task";
+import { getWeekInfo } from "@/lib/date-utils";
 import { cn } from "@/lib/utils";
 
 const STATUS_LABELS: Record<TaskStatus, string> = {
@@ -31,6 +33,7 @@ export function TaskSearch() {
 
   const debouncedQuery = useDebounce(query, 300);
   const tasks = useTaskStore((state) => state.tasks);
+  const setSelectedWeek = useFilterStore((state) => state.setSelectedWeek);
 
   // Filter tasks based on debounced query
   const filteredTasks = useMemo(() => {
@@ -112,19 +115,31 @@ export function TaskSearch() {
     [isOpen, filteredTasks, selectedIndex]
   );
 
-  const handleTaskSelect = (task: Task) => {
-    // Scroll to the task card in the board
-    const taskElement = document.querySelector(`[data-task-id="${task.id}"]`);
+  const highlightTask = useCallback((taskId: string) => {
+    const taskElement = document.querySelector(`[data-task-id="${taskId}"]`);
     if (taskElement) {
       taskElement.scrollIntoView({ behavior: "smooth", block: "center" });
-      // Add a highlight effect
       taskElement.classList.add("ring-2", "ring-primary", "ring-offset-2");
       setTimeout(() => {
         taskElement.classList.remove("ring-2", "ring-primary", "ring-offset-2");
       }, 2000);
     }
+  }, []);
+
+  const handleTaskSelect = (task: Task) => {
     setIsOpen(false);
     setQuery("");
+
+    // If task is completed, navigate to the week it was created
+    if (task.status === "completed") {
+      const createdWeek = getWeekInfo(new Date(task.createdAt));
+      setSelectedWeek(createdWeek);
+      // Wait for re-render then highlight
+      setTimeout(() => highlightTask(task.id), 100);
+    } else {
+      // Task is not completed, just highlight it
+      highlightTask(task.id);
+    }
   };
 
   const handleClear = () => {

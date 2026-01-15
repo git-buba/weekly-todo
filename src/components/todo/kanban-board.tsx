@@ -201,10 +201,7 @@ export function KanbanBoard({
       </div>
 
       {/* Drag Overlay - shows the dragging task */}
-      <DragOverlay dropAnimation={{
-        duration: 200,
-        easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)',
-      }}>
+      <DragOverlay dropAnimation={null}>
         {activeTask ? (
           <div className="scale-105 cursor-grabbing shadow-xl">
             <TaskCard task={activeTask} isDragging />

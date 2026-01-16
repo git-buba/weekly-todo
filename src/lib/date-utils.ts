@@ -110,7 +110,7 @@ export function isDateInWeek(date: string | Date, weekInfo: WeekInfo): boolean {
  * Format week range for display
  * Example: "Jan 6 - Jan 12, 2026"
  */
-export function formatWeekRange(weekInfo: WeekInfo, locale: string = 'ko-KR'): string {
+export function formatWeekRange(weekInfo: WeekInfo, locale: string = 'en-US'): string {
   const start = weekInfo.startDate.toLocaleDateString(locale, {
     month: 'short',
     day: 'numeric'
@@ -200,7 +200,7 @@ export function getDayName(date: Date, locale: string = 'en-US'): string {
  * Format date for display
  * Example: "Jan 13, 2026"
  */
-export function formatDate(date: Date | string, locale: string = 'ko-KR'): string {
+export function formatDate(date: Date | string, locale: string = 'en-US'): string {
   const d = new Date(date);
   return d.toLocaleDateString(locale, {
     year: 'numeric',
@@ -251,7 +251,7 @@ export function isTomorrow(date: Date | string): boolean {
  * Get relative date description
  * Example: "Today", "Tomorrow", "Yesterday", or formatted date
  */
-export function getRelativeDateDescription(date: Date | string, locale: string = 'ko-KR'): string {
+export function getRelativeDateDescription(date: Date | string, locale: string = 'en-US'): string {
   if (isToday(date)) return 'Today';
   if (isTomorrow(date)) return 'Tomorrow';
 
